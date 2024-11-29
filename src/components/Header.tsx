@@ -3,10 +3,11 @@ import Link from "next/link";
 // import React from "react";
 import logo from "../public/assets/icons/logo.svg";
 import smalLogo from "../public/assets/icons/logo-icon.svg";
-export default function Header({ children }: HeaderProps) {
+import { cn } from "@/lib/utils";
+export default function Header({ children, className }: HeaderProps) {
   return (
     <>
-      <div className="header">
+      <div className={cn("header", className)}>
         <Link href="/" className="md:flex-1">
           <Image
             src={logo}

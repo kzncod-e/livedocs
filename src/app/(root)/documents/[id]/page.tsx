@@ -1,23 +1,45 @@
-import { Editor } from "@/components/editor/Editor";
-import Header from "@/components/Header";
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-export default function Document() {
+import CollaborativeRoom from "@/components/CollaborativeRoom";
+import { getDocument } from "@/lib/actions/room.actions";
+import { getClerkUsers } from "@/lib/actions/user.action";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+
+export default async function Document({ params: { id } }: SearchParamProps) {
+  const clerkUser = await currentUser();
+  if (!clerkUser) {
+    redirect("/sign-in");
+  }
+  const room = await getDocument({
+    roomId: id,
+    userId: clerkUser.emailAddresses[0].emailAddress,
+  });
+  if (!room) redirect("/");
+  //todo:Assess the permision of the user to access the document
+  const userIds = Object.keys(room.usersAccesses);
+  const users = await getClerkUsers({ userIds });
+  console.log(users, "ini users");
+
+  const usersData = users?.map((user: User) => ({
+    ...user,
+    userType: room.usersAccesses[user.email]?.includes("room:write")
+      ? "editor"
+      : "viewer",
+  }));
+  const currentUserType = room.usersAccesses[
+    clerkUser.emailAddresses[0].emailAddress
+  ]?.includes("room:write")
+    ? "editor"
+    : "viewer";
   return (
     <>
-      <div>
-        <Header>
-          <div className="flex w-fit items-center justify-center gap-2">
-            <p className="document-title">this is a fake document title</p>
-          </div>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </Header>
-        <Editor />
-      </div>
+      <main className="flex w-full flex-col items-center">
+        <CollaborativeRoom
+          users={usersData}
+          currentUserType={currentUserType}
+          roomId={id}
+          roomMetadata={room.metadata}
+        />
+      </main>
     </>
   );
 }
