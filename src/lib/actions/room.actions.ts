@@ -4,7 +4,8 @@ import { nanoid } from "nanoid";
 import { liveblocks } from "../liveblocks";
 import { revalidatePath } from "next/cache";
 import { getAccessType, parseStringify } from "../utils";
-// import { redirect } from "next/navigation";
+// import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
 // import { LiveblocksError } from "@liveblocks/node";
 
 export const createDocument = async ({
@@ -173,6 +174,7 @@ export const deleteDocument = async (roomId: string) => {
     }
 
     revalidatePath("/");
+    redirect("/");
   } catch (error) {
     console.log(`error happened while deleting the room ${error}`);
   }

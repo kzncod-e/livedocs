@@ -22,9 +22,14 @@ export const Notification = () => {
   const { inboxNotifications } = useInboxNotifications();
   const { count } = useUnreadInboxNotificationsCount();
 
+  // Filter unread notifications
   const unreadNotifications = inboxNotifications.filter(
-    (notification) => !notification.readAt // Filter unread notifications
+    (notification) => !notification.readAt
   );
+
+  // Logging notifications
+  console.log("Total notifications:", inboxNotifications.length);
+  console.log("Unread notifications:", unreadNotifications.length);
 
   return (
     <Popover>
@@ -47,12 +52,11 @@ export const Notification = () => {
             },
           }}>
           <InboxNotificationList>
-            {unreadNotifications.length <= 0 && (
+            {unreadNotifications.length === 0 && (
               <p className="py-2 text-center text-dark-500">
                 No notifications yet
               </p>
             )}
-
             {unreadNotifications.length > 0 &&
               unreadNotifications.map((inboxNotification) => (
                 <InboxNotification
@@ -69,14 +73,12 @@ export const Notification = () => {
                         showActions={false}
                       />
                     ),
-                    textMention: (props) => {
-                      return (
-                        <InboxNotification.TextMention
-                          {...props}
-                          showRoomName={false}
-                        />
-                      );
-                    },
+                    textMention: (props) => (
+                      <InboxNotification.TextMention
+                        {...props}
+                        showRoomName={false}
+                      />
+                    ),
                     $documentAccess: (props) => {
                       const { title, avatar } =
                         props.inboxNotification.activities[0].data;
