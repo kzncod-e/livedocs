@@ -17,7 +17,6 @@ export default async function Document({ params: { id } }: SearchParamProps) {
   //todo:Assess the permision of the user to access the document
   const userIds = Object.keys(room.usersAccesses);
   const users = await getClerkUsers({ userIds });
-  console.log(users, "ini users");
 
   const usersData = users?.map((user: User) => ({
     ...user,

@@ -3,7 +3,7 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { getAccessType, parseStringify } from "../utils";
 import { liveblocks } from "../liveblocks";
-import { Room } from "@liveblocks/client";
+
 import { revalidatePath } from "next/cache";
 
 export const getClerkUsers = async ({ userIds }: { userIds: string[] }) => {
