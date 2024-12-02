@@ -30,7 +30,6 @@ function Placeholder() {
 }
 
 export function Editor({
-  roomId,
   currentUserType,
 }: {
   roomId: string;
