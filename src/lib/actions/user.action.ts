@@ -1,4 +1,5 @@
 "use server";
+import { nanoid } from "nanoid";
 
 import { clerkClient } from "@clerk/nextjs/server";
 import { getAccessType, parseStringify } from "../utils";
@@ -66,7 +67,21 @@ export const updateDocumentAccess = async ({
     };
     const room = await liveblocks.updateRoom(roomId, { usersAccesses });
     if (room) {
-      //todo sent a notificaton to the invited user
+      const notificationId = nanoid();
+
+      await liveblocks.triggerInboxNotification({
+        userId: email,
+        kind: "$documentAccess",
+        subjectId: notificationId,
+        activityData: {
+          userType,
+          title: `You have been granted ${userType} access to the document by ${updatedBy.name}`,
+          updatedBy: updatedBy.name,
+          avatar: updatedBy.avatar,
+          email: updatedBy.email,
+        },
+        roomId,
+      });
     }
     revalidatePath(`documents/${roomId}`);
     return parseStringify(room);
